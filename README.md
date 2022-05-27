@@ -15,6 +15,8 @@
 ## instalar
 
 ```sh
+git clone --depth=1 'https://github.com/khonsaloh/diceware.git'
+cd diceware
 sudo make install
 
 ```
