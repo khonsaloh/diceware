@@ -1,6 +1,6 @@
 #!/bin/sh
 
-wordlist="/usr/share/diction/word-list"
+wordlist=/usr/share/diction/word-list.txt
 contador=1
 separador='-'
 entropia=si
@@ -8,7 +8,8 @@ words=6
 
 unica_tirada() {
   tirada=$(shuf -r -z -i 1-6 -n 5)
-  grep "^$tirada" $wordlist 2>/dev/null 
+  grep "^$tirada" $wordlist 2>/dev/null \
+    || shuf -n1 $wordlist
 }
 
 ayuda() {
@@ -22,7 +23,7 @@ EOF
 
 frase_de_paso() {
   for i in $(seq $words); do
-    unica_tirada | awk '{print $2}'
+    unica_tirada | awk '{print $NF}'
   done | tr '\n' "$separador"
 }
 
@@ -32,6 +33,7 @@ while getopts 'qs:e:d:n:' OPT; do
     n) words=$OPTARG;;
     d) wordlist=$OPTARG;;
     q) entropia=no;;
+    e) en=$OPTARG;;
     *) ayuda; exit;;
   esac
 done
@@ -44,9 +46,11 @@ rm_last=$(frase_de_paso)
 contra=${rm_last%?}
 
 entropia () {
-  printf '%s\n' "de un diccionario con $(wc -l < $wordlist) palabras"
+  palabras=$(wc -l < $wordlist)
+  printf '%s\n' "de un diccionario con $palabras palabras"
+  entropia=$(echo "scale=2; l($palabras)/l(2)" | bc -l)
   printf 'entropia '
-  printf '%s\n' "12.9 * $words" | bc -l
+  printf '%s\n' "$entropia * $words" | bc -l
   printf '%s\n' "longitud $(echo -n $contra | wc -c)"
 }
 

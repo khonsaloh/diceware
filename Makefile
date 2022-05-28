@@ -7,7 +7,7 @@ install:
 	chmod 0755 $(PROG)
 	mkdir -p $(DICTION)
 	cp -rp $(PROG) $(PREFIX)/$(PROG)
-	cp -rp word-list $(DICTION)
+	cp -rp word-list.txt $(DICTION)
 
 uninstall:
 	rm -rf $(PREFIX)/$(PROG)
